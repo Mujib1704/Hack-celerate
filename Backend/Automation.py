@@ -53,40 +53,40 @@ def Content(Topic):
         default_text_editor = 'notepad.exe'  # Default text editor is notepad.
         subprocess.Popen([default_text_editor,File])
         
-        def ContentWriterAI(prompt):
-            messages.append({"role": "user", "content": f"{prompt}"})  # Add the user's prompt to messages.
+    def ContentWriterAI(prompt):
+        messages.append({"role": "user", "content": f"{prompt}"})  # Add the user's prompt to messages.
 
-            completion = Client.chat.completions.create(
-                model="mixtral-8x7b-32768",  # Specify the AI model.
-                messages=SystemChatBot + messages,  # Include system instructions and chat history.
-                max_tokens=2048,  # Limit the maximum tokens in the response.
-                temperature=0.7,  # Adjust response randomness.
-                top_p=1,  # Use nucleus sampling for response diversity.
-                stream=True,  # Enable streaming response.
-                stop=None  # Allow the model to determine stopping conditions.
-            )
+        completion = Client.chat.completions.create(
+            model="llama3-70b-8192",  # or another valid model from your account
+            messages=SystemChatBot + messages,  # Include system instructions and chat history.
+            max_tokens=2048,  # Limit the maximum tokens in the response.
+            temperature=0.7,  # Adjust response randomness.
+            top_p=1,  # Use nucleus sampling for response diversity.
+            stream=True,  # Enable streaming response.
+            stop=None  # Allow the model to determine stopping conditions.
+        )
 
-            Answer = ""  # Initialize an empty string for the response.
+        Answer = ""  # Initialize an empty string for the response.
 
             # Process streamed response chunks.
-            for chunk in completion:
-                if chunk.choices[0].delta.content:  # Check for content in the current chunk.
-                    Answer += chunk.choices[0].delta.content  # Append the content to the answer.
+        for chunk in completion:
+            if chunk.choices[0].delta.content:  # Check for content in the current chunk.
+                Answer += chunk.choices[0].delta.content  # Append the content to the answer.
 
-            Answer = Answer.replace("</s>", "")  # Remove unwanted tokens from the response.
-            messages.append({"role": "assistant", "content": Answer})  # Add the AI's response to messages.
-            return Answer
+        Answer = Answer.replace("</s>", "")  # Remove unwanted tokens from the response.
+        messages.append({"role": "assistant", "content": Answer})  # Add the AI's response to messages.
+        return Answer
 
-        Topic: str = Topic.replace("Content ", "")  # Remove 'Content' from the topic.
-        ContentByAI = ContentWriterAI(Topic)  # Generate content using AI.
+    Topic: str = Topic.replace("Content ", "")  # Remove 'Content' from the topic.
+    ContentByAI = ContentWriterAI(Topic)  # Generate content using AI.
 
         # Save the generated content to a text file.
-        with open(rf"Data\{Topic.lower().replace(' ', '')}.txt", "w", encoding="utf-8") as file:
+    with open(rf"Data\{Topic.lower().replace(' ', '')}.txt", "w", encoding="utf-8") as file:
             file.write(ContentByAI)  # Write the content to the file.
             file.close()
 
-        OpenNotepad(rf"Data\{Topic.lower().replace(' ', '')}.txt")  # Open the File in Notepad.
-        return True  # Indicate success.
+    OpenNotepad(rf"Data\{Topic.lower().replace(' ', '')}.txt")  # Open the File in Notepad.
+    return True  # Indicate success.
 
         # Function to search for a topic on YouTube.
 def YouTubeSearch(Topic):
